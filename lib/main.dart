@@ -49,7 +49,7 @@ void main(List<String> args) {
 }
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
     return _userTransactions.where(
       (element) => element.date.isAfter(
         DateTime.now().subtract(
-          Duration(days: 7),
+          const Duration(days: 7),
         ),
       ),
     );
@@ -196,8 +196,8 @@ class _HomePageState extends State<HomePage> {
 
     return Platform.isIOS
         ? CupertinoPageScaffold(
-            child: pageBody,
             navigationBar: appBar as ObstructingPreferredSizeWidget,
+            child: pageBody,
           )
         : Scaffold(
             appBar: appBar,
@@ -208,7 +208,7 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () {
                       _startAddNewTransaction(context);
                     },
-                    child: Icon(Icons.add),
+                    child: const Icon(Icons.add),
                   ),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,

@@ -1,11 +1,9 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_expenses_app/widgets/adaptive_text_button.dart';
 
 class NewTransaction extends StatefulWidget {
-  NewTransaction(this.addNewTx, {super.key});
+  const NewTransaction(this.addNewTx, {super.key});
   final Function addNewTx;
 
   @override
@@ -66,18 +64,18 @@ class _NewTransactionState extends State<NewTransaction> {
             children: [
               TextField(
                 controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: const InputDecoration(labelText: 'Title'),
                 onSubmitted: ((value) => _submitData()),
                 // onChanged: ((value) => titleInput = value),
               ),
               TextField(
                 controller: _amountController,
-                decoration: InputDecoration(labelText: 'Amount '),
+                decoration: const InputDecoration(labelText: 'Amount '),
                 keyboardType: TextInputType.number,
                 onSubmitted: (value) => _submitData(),
                 // onChanged: (value) => amountInput = value,
               ),
-              Container(
+              SizedBox(
                 height: 70,
                 child: Row(
                   children: [
@@ -98,9 +96,9 @@ class _NewTransactionState extends State<NewTransaction> {
                   // print(_amountController.text);
                   _submitData();
                 },
-                child: Text("Add Transaction"),
                 style: ElevatedButton.styleFrom(
-                    textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold)),
+                child: const Text("Add Transaction"),
               )
             ],
           ),
