@@ -100,6 +100,89 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  List<Widget> _buildLandscapeContent(
+      MediaQueryData mediaQuery, AppBar appBar, Widget txListWidget) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Show Chart",
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          Switch.adaptive(
+            activeColor: Theme.of(context).colorScheme.secondary,
+            value: _showChart,
+            onChanged: ((value) {
+              setState(() {
+                _showChart = value;
+              });
+            }),
+          ),
+        ],
+      ),
+      _showChart
+          ? SizedBox(
+              width: double.infinity,
+              child: SizedBox(
+                  height: (mediaQuery.size.height -
+                          appBar.preferredSize.height -
+                          mediaQuery.padding.top) *
+                      0.7,
+                  child: Chart(_recentTransactions.toList())),
+            )
+          : txListWidget
+    ];
+  }
+
+  List<Widget> _buildPortraitContent(
+      MediaQueryData mediaQuery, AppBar appBar, Widget txListWidget) {
+    return [
+      SizedBox(
+        width: double.infinity,
+        child: SizedBox(
+            height: (mediaQuery.size.height -
+                    appBar.preferredSize.height -
+                    mediaQuery.padding.top) *
+                0.3,
+            child: Chart(_recentTransactions.toList())),
+      ),
+      txListWidget
+    ];
+  }
+
+  Widget _buildMaterialAppBar(double txtScaleFactor) {
+    return AppBar(
+      title: Text(
+        "Personal Expenses",
+        style: TextStyle(
+            fontSize: Theme.of(context).appBarTheme.titleTextStyle!.fontSize! *
+                txtScaleFactor),
+      ),
+      actions: <Widget>[
+        IconButton(
+          onPressed: (() => _startAddNewTransaction(context)),
+          icon: const Icon(Icons.add),
+        )
+      ],
+    );
+  }
+
+  Widget _buildCupertinoNavBar() {
+    return CupertinoNavigationBar(
+      middle: const Text("Personal Expenses"),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: (() => _startAddNewTransaction(context)),
+            child: const Icon(CupertinoIcons.add),
+          )
+        ],
+      ),
+    );
+  }
+
   bool _showChart = false;
 
   @override
@@ -107,34 +190,9 @@ class _HomePageState extends State<HomePage> {
     final mediaQuery = MediaQuery.of(context);
     bool isLandscape = mediaQuery.orientation == Orientation.landscape;
     final txtScaleFactor = mediaQuery.textScaleFactor;
-    final PreferredSizeWidget appBar = Platform.isIOS
-        ? CupertinoNavigationBar(
-            middle: const Text("Personal Expenses"),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: (() => _startAddNewTransaction(context)),
-                  child: const Icon(CupertinoIcons.add),
-                )
-              ],
-            ),
-          ) as ObstructingPreferredSizeWidget
-        : AppBar(
-            title: Text(
-              "Personal Expenses",
-              style: TextStyle(
-                  fontSize:
-                      Theme.of(context).appBarTheme.titleTextStyle!.fontSize! *
-                          txtScaleFactor),
-            ),
-            actions: <Widget>[
-              IconButton(
-                onPressed: (() => _startAddNewTransaction(context)),
-                icon: const Icon(Icons.add),
-              )
-            ],
-          );
+    final appBar = Platform.isIOS
+        ? _buildCupertinoNavBar() as PreferredSizeWidget
+        : _buildMaterialAppBar(txtScaleFactor) as PreferredSizeWidget;
     final txListWidget = SizedBox(
         height: (mediaQuery.size.height -
                 appBar.preferredSize.height -
@@ -147,47 +205,11 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Show Chart",
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  Switch.adaptive(
-                    activeColor: Theme.of(context).colorScheme.secondary,
-                    value: _showChart,
-                    onChanged: ((value) {
-                      setState(() {
-                        _showChart = value;
-                      });
-                    }),
-                  ),
-                ],
-              ),
+              ..._buildLandscapeContent(
+                  mediaQuery, appBar as AppBar, txListWidget),
             if (!isLandscape)
-              SizedBox(
-                width: double.infinity,
-                child: SizedBox(
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        0.3,
-                    child: Chart(_recentTransactions.toList())),
-              ),
-            if (!isLandscape) txListWidget,
-            if (isLandscape)
-              _showChart
-                  ? SizedBox(
-                      width: double.infinity,
-                      child: SizedBox(
-                          height: (mediaQuery.size.height -
-                                  appBar.preferredSize.height -
-                                  mediaQuery.padding.top) *
-                              0.7,
-                          child: Chart(_recentTransactions.toList())),
-                    )
-                  : txListWidget
+              ..._buildPortraitContent(
+                  mediaQuery, appBar as AppBar, txListWidget),
           ],
         ),
       ),
